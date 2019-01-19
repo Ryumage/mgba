@@ -17,8 +17,8 @@
 using namespace QGBA;
 
 #if MGBA_LOCK_STEP_USE_MUTEX
-#define ACQUIRE_CONTROLLER(controller, lockstep) MutexLock(&lockstep->mutex);
-#define RELEASE_CONTROLLER(controller, lockstep) MutexUnlock(&lockstep->mutex);
+#define ACQUIRE_CONTROLLER(controller, lockstep)
+#define RELEASE_CONTROLLER(controller, lockstep)
 #define CORE_THREAD_WAIT(player, lockstep) mCoreThreadWaitFromThread(player->controller->thread());
 #define CORE_THREAD_STOP_WAITING(player, lockstep) mCoreThreadStopWaiting(player->controller->thread());
 
@@ -152,6 +152,8 @@ MultiplayerController::MultiplayerController() {
 				CORE_THREAD_STOP_WAITING(player, lockstep);
 				player->awake = 1;
 			}
+
+			player->cyclesPosted = 0;
 		} else {
 			for (int i = 1; i < controller->m_players.count(); ++i) {
 				Player* player = &controller->m_players[i];

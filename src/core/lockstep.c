@@ -13,7 +13,7 @@ void mLockstepInit(struct mLockstep* lockstep) {
 #endif
 
 #if MGBA_LOCK_STEP_USE_MUTEX
-	MutexInitRecursive(&lockstep->mutex);
+	MutexInit(&lockstep->mutex);
 	ConditionInit(&lockstep->cond);
 #endif
 }

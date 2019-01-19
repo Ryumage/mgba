@@ -144,16 +144,18 @@ MultiplayerController::MultiplayerController() {
 	m_lockstep.unload = [](mLockstep* lockstep, int id) {
 		MultiplayerController* controller = static_cast<MultiplayerController*>(lockstep->context);
 		ACQUIRE_CONTROLLER(controller, lockstep);
-		Player* player = &controller->m_players[id];
 		if (id) {
+			Player* player = &controller->m_players[id];
 			player->controller->setSync(true);
+			player->cyclesPosted = 0;
+
+			// release master GBA if it is waiting for this GBA
+			player = &controller->m_players[0];
 			player->waitMask &= ~(1 << id);
 			if (!player->waitMask && player->awake < 1) {
 				CORE_THREAD_STOP_WAITING(player, lockstep);
 				player->awake = 1;
 			}
-
-			player->cyclesPosted = 0;
 		} else {
 			for (int i = 1; i < controller->m_players.count(); ++i) {
 				Player* player = &controller->m_players[i];

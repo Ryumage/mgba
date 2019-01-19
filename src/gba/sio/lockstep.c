@@ -112,9 +112,10 @@ bool GBASIOLockstepNodeLoad(struct GBASIODriver* driver) {
 	node->nextEvent = 0;
 	node->eventDiff = 0;
 	mTimingSchedule(&driver->p->p->timing, &node->event, 0);
-	node->mode = driver->p->mode;
 
 	LOCK_LOCKSTEP(node->p->d);
+
+	node->mode = driver->p->mode;
 
 	switch (node->mode) {
 	case SIO_MULTI:
@@ -164,9 +165,7 @@ bool GBASIOLockstepNodeUnload(struct GBASIODriver* driver) {
 
 		mTimingDeschedule(&driver->p->p->timing, &node->event);
 		mTimingSchedule(&driver->p->p->timing, &node->event, 0);
-		if (scheduled) {
-			node->eventDiff -= oldWhen - node->event.when;
-		}
+		node->eventDiff -= oldWhen - node->event.when;
 		mTimingDeschedule(&driver->p->p->timing, &node->event);
 	}
 
@@ -184,6 +183,9 @@ bool GBASIOLockstepNodeUnload(struct GBASIODriver* driver) {
 	if (!node->id) {
 		SAFE_STORE(node->p->d.transferActive, TRANSFER_IDLE);
 	}
+
+	// invalidate SIO mode
+	node->mode = SIO_UNKNOWN;
 
 	UNLOCK_LOCKSTEP(node->p->d);
 

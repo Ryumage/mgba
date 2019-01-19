@@ -18,7 +18,8 @@ enum GBASIOMode {
 	SIO_MULTI = 2,
 	SIO_UART = 3,
 	SIO_GPIO = 8,
-	SIO_JOYBUS = 12
+	SIO_JOYBUS = 12,
+	SIO_UNKNOWN = 0xffff,
 };
 
 enum GBASIOJOYCommand {
